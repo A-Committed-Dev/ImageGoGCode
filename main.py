@@ -25,6 +25,7 @@ def resize_img(img):
         image.save(index[0] + "_resized" + '.png')
         return index[0] + "_resized" + '.png'
 
+
 def greyscale(img):
     index = img.split(".")
     image = Image.open(img).convert("L")
@@ -90,7 +91,6 @@ def black_white(img):
 def get_img_cordinates(img):
     image = Image.open(img, 'r').convert("L")
     width, height = image.size
-
     vectorlist = []
     templist = []
     for x in range(width):
@@ -122,14 +122,30 @@ def get_real_cordinates(vectorlist):
             (translate_pixel_coordinates(list[0][0], list[0][1]), translate_pixel_coordinates(list[1][0], list[1][1])))
         # real_cordinates.append(translate_pixel_coordinates(list[0][0],list[0][1]))
         # real_cordinates.append(translate_pixel_coordinates(list[1][0], list[1][1]))
-    print(real_cordinates)
+    return real_cordinates
 
-def create_gcode():
-    pass
+def create_gcode(cordinate_list):
+    n = 0
+    f = open("print.gcode", "a")
 
 
-get_real_cordinates(get_img_cordinates("1_resized_greyscale_black_white.png"))
-
+    for cordinate_set in cordinate_list:
+        # print(cordinate_set)
+        f.write("N{n} G{g} X{x} Y{y} Z{z}\n".format(n=n, g=0, x=cordinate_set[0][0], y=cordinate_set[0][1], z=30))
+        print("N{n} G{g} X{x} Y{y} Z{z}".format(n=n, g=0, x=cordinate_set[0][0], y=cordinate_set[0][1], z=30))
+        n += 1
+        f.write("N{n} G{g} X{x} Y{y} Z{z}\n".format(n=n, g=1, x=cordinate_set[0][0], y=cordinate_set[0][1], z=0.5))
+        print("N{n} G{g} X{x} Y{y} Z{z}".format(n=n, g=1, x=cordinate_set[0][0], y=cordinate_set[0][1], z=0.5))
+        n += 1
+        f.write("N{n} G{g} X{x} Y{y} Z{z}\n".format(n=n, g=1, x=cordinate_set[1][0], y=cordinate_set[1][1], z=0.5))
+        print("N{n} G{g} X{x} Y{y} Z{z}".format(n=n, g=1, x=cordinate_set[1][0], y=cordinate_set[1][1], z=0.5))
+        n += 1
+        f.write("N{n} G{g} X{x} Y{y} Z{z}\n".format(n=n, g=0, x=cordinate_set[1][0], y=cordinate_set[1][1], z=30))
+        print("N{n} G{g} X{x} Y{y} Z{z}".format(n=n, g=0, x=cordinate_set[1][0], y=cordinate_set[1][1], z=30))
+        n += 1
+    f.close()
+# black_white("duck_resized_greyscale.png")
+create_gcode(get_real_cordinates(get_img_cordinates("1_resized_greyscale_black_white.png")))
 
 
 # black_white("1_resized_greyscale.png")
